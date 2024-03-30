@@ -1,13 +1,13 @@
 import FileUpload from "@/components/FileUpload";
-import MenuItem from "@/components/MenuItem";
-import MenuWrapper from "@/components/MenuWrapper";
+import NavMenu from "@/components/NavMenu";
 
 const Rulebooks = () => {
 
     return (
-        <MenuWrapper>
-                <FileUpload/>
-        </MenuWrapper>
+        <div>            
+            <NavMenu/>
+            <FileUpload/>
+        </div>
     );
 }
 

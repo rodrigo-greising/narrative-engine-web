@@ -1,5 +1,7 @@
 import MenuWrapper from "@/components/MenuWrapper";
 import RecordingList from "@/components/RecordingList";
+import NavMenu from "@/components/NavMenu";
+
 
 const GameRecordings = () => {
 
@@ -10,12 +12,12 @@ const GameRecordings = () => {
     ];
 
     return (
-        <MenuWrapper>
+        <div>
+            <NavMenu/>
             <div className='w-3/4'>
                 <RecordingList files={files}/>
             </div>
-        </MenuWrapper>
-
+        <div/>
     );
 }
 

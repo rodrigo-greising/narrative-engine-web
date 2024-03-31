@@ -3,6 +3,8 @@
 import * as React from "react"
 import Link from "next/link"
 
+import { signIn } from "next-auth/react";
+
 import { cn } from "@/lib/utils"
 import {
   NavigationMenu,
@@ -13,6 +15,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import { Button } from "./ui/button";
 
 
 const components: { title: string; href: string; description: string }[] = [
@@ -92,6 +95,8 @@ export function NavMenu() {
             </Link>
           </NavigationMenuItem>
         </NavigationMenuList>
+        <Button onClick={() => signIn("discord")}>Sign in with Discord</Button>
+
       </NavigationMenu>
       </div>
   )

@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import DiscordAuthProvider from "next-auth/providers/discord"
 
-export default NextAuth({
+const handler =  NextAuth({
     providers: [
         DiscordAuthProvider({
           clientId: process.env.DISCORD_CLIENT_ID!,
@@ -9,3 +9,6 @@ export default NextAuth({
         }),
       ],
 })
+
+export { handler as GET, handler as POST }
+

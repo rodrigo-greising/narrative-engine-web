@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import NavMenu from "@/components/NavMenu";
+import Link from "next/link";
 
 
 export default function Home() {
@@ -9,25 +10,25 @@ export default function Home() {
       <div className="flex h-full flex-col items-center justify-between p-24">
         <h1 className="text-6xl text-blue-violet-500 font-bold mb-4">Narrative Engine</h1>
         <h2>Unleash the Power of AI in Your RPG Universe</h2>
-        <p className="text-slate-600 font-s mb-8">
+        <p className="text-slate-600  mb-8">
           A platform for creating and managing worlds for your stories and games. 
         </p>
-        <Button>Get Started</Button>
+        <Link href={'/create campaign'} className="p-2 bg-blue-violet-900 text-blue-violet-50 shadow hover:bg-blue-violet-900/90 dark:bg-blue-violet-50 dark:text-blue-violet-900 dark:hover:bg-blue-violet-50/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-violet-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-blue-violet-300">Get Started</Link>
 
         <div className="w-1/2 my-8">
           <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Upload, Understand, Unfold:</h4>
-          <p className="text-slate-600 h-20 font-s mb-8 z-">We're not just building a tool; we're crafting an AI-powered revolution for role-playing games. Begin by uploading your RPG rule sets – whether it's the classic Dungeons & Dragons or your unique creation. Our AI delves deep into the rules, using advanced vector space and embedding techniques to create a cohesive, interactive rule set.</p>
+          <p className="text-slate-600 h-20  mb-8 ">We're not just building a tool; we're crafting an AI-powered revolution for role-playing games. Begin by uploading your RPG rule sets – whether it's the classic Dungeons & Dragons or your unique creation. Our AI delves deep into the rules, using advanced vector space and embedding techniques to create a cohesive, interactive rule set.</p>
           <Button>Learn More</Button>
         </div>
 
         <div className="w-1/2 my-8">
           <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Clarity at Your Command:</h4>
-          <p className="text-slate-600 h-20 font-s mb-8 z-">Gone are the days of flipping through pages for rule clarifications. Ask your questions directly through Discord, and get instant, accurate responses. This seamless integration means less time searching, more time adventuring.</p>
+          <p className="text-slate-600 h-20 mb-8 ">Gone are the days of flipping through pages for rule clarifications. Ask your questions directly through Discord, and get instant, accurate responses. This seamless integration means less time searching, more time adventuring.</p>
         </div>
 
         <div className="w-1/2 my-8">
           <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Relive Your Adventures:</h4>
-          <p className="text-slate-600 h-20 font-s mb-8 z-">Never miss a beat of your epic campaigns. Record your matches for an immersive playback experience. Whether you prefer aural storytelling or searchable transcriptions, Narrative Engine remembers so you can revisit every thrilling moment.</p>
+          <p className="text-slate-600 h-20  mb-8 ">Never miss a beat of your epic campaigns. Record your matches for an immersive playback experience. Whether you prefer aural storytelling or searchable transcriptions, Narrative Engine remembers so you can revisit every thrilling moment.</p>
         </div>
 
 
@@ -36,22 +37,22 @@ export default function Home() {
 
           <div className="w-1/2 my-8">
             <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Dynamic Lore Development:</h4>
-            <p className="text-slate-600 h-20 font-s mb-8 z-">From side characters to political figures, from hidden locations to legendary weaponry, our AI expands your world, adhering to the templates and relations you define. You set the foundation; we build the universe.</p>
+            <p className="text-slate-600 h-20  mb-8 ">From side characters to political figures, from hidden locations to legendary weaponry, our AI expands your world, adhering to the templates and relations you define. You set the foundation; we build the universe.</p>
           </div>
 
           <div className="w-1/2 my-16">
             <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Your World, Our Canvas:</h4>
-            <p className="text-slate-600 h-20 font-s mb-8 z-">We are working on our World Editor – a hex-based mapping tool. Craft your world’s geography with precision and creativity. From mountains to rivers to star systems, shape every inch of your realm. This isn't just for visual appeal; these maps serve as a ground truth for calculating travel distances, accessing resources, and understanding the strategic importance of locations.</p>
+            <p className="text-slate-600 h-20  mb-8 ">We are working on our World Editor – a hex-based mapping tool. Craft your world’s geography with precision and creativity. From mountains to rivers to star systems, shape every inch of your realm. This isn't just for visual appeal; these maps serve as a ground truth for calculating travel distances, accessing resources, and understanding the strategic importance of locations.</p>
           </div>
 
           <div className="w-1/2 my-16">
             <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Faction Simulation with Agents:</h4>
-            <p className="text-slate-600 h-20 font-s mb-8 z-">Introduce complex societies and organizations. Watch as factions interact dynamically, each with their own agendas and characters that react to the evolving world.</p>
+            <p className="text-slate-600 h-20  mb-8 ">Introduce complex societies and organizations. Watch as factions interact dynamically, each with their own agendas and characters that react to the evolving world.</p>
           </div>
 
           <div className="w-1/2 my-8">
             <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Dynamic World State Updates:</h4>
-            <p className="text-slate-600 h-20 font-s mb-8 z-">As your players make their moves, the world changes with them. Our system tracks these actions, ensuring the world's state is always up-to-date, reflecting the ongoing saga of your adventure.</p>
+            <p className="text-slate-600 h-20  mb-8 ">As your players make their moves, the world changes with them. Our system tracks these actions, ensuring the world's state is always up-to-date, reflecting the ongoing saga of your adventure.</p>
           </div>
 
         </div>

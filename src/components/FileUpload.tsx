@@ -27,13 +27,15 @@ const FileUpload = () => {
         // Add more files here
     ];
 
-    return (<div className='p-2 rounded-xl h-3/4 w-3/4 flex justify-center items-center flex-col'>
+    return (
+    <div className='p-2 rounded-xl h-3/4 w-3/4 flex justify-center items-center flex-col pt-16'>
+        <h4 className="text-2xl h-6 text-blue-violet-500 font-bold pb-16">Upload and manage your source books here.</h4>
         <div {...getRootProps({
-            className: 'w-1/4 h-1/8 border-dashed border-2 rounded-xl cursor-pointer py-8 flex justify-center items-center flex-col mb-10'
+            className: 'w-1/4 h-1/8 border-dashed border-2 border-blue-violet-500 rounded-xl cursor-pointer py-8 flex justify-center items-center flex-col mb-10'
         })}>
             <input {...getInputProps()}/>
-               <Inbox className='text-slate-100'/>
-                <p className='text-slate-100 text-center'>Drop rulebooks here</p>
+               <Inbox className='text-blue-violet-600'/>
+                <p className='text-blue-violet-600 text-center'>Drop rulebooks here</p>
         </div>
         <FileList files={files} seeRecording={false}/>
     </div>);

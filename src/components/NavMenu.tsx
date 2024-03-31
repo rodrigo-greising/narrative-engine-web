@@ -3,103 +3,75 @@
 import * as React from "react"
 import Link from "next/link"
 
-import { signIn } from "next-auth/react";
+import { SessionProvider, signIn, useSession } from "next-auth/react";
 
-import { cn } from "@/lib/utils"
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
+  NavigationMenuContent,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+  NavigationMenuLink,
+  navigationMenuTriggerStyle
+} from "@/components/ui/navigation-menu";
+
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Rulebooks",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
-  },
-  {
-    title: "Game Recordings",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "World Map",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Lore",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Faction Tracker",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Player Characters",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-  {
-    title: "Items",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-  {
-    title: "NPCs",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  }
-]
-
-export function NavMenu() {
+export function NavMenu({ pageProps }) {
+  const session = pageProps?.session;
   return (
-      <div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md">
-      <NavigationMenu >
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <Link href="/" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                <h1 className="text-xl text-blue-violet-500 font-bold">Narrative Engine</h1>
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Rule Books
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Game Recordings
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-        <Button onClick={() => signIn("discord")}>Sign in with Discord</Button>
-
-      </NavigationMenu>
-      </div>
+    <SessionProvider session={session}>
+      <NavMenuContent />
+    </SessionProvider>
   )
+}
+
+function NavMenuContent() {
+  const { data: session } = useSession()
+
+  return (<div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md">
+    <NavigationMenu >
+      <NavigationMenuItem className="pr-4">
+        <Link href="/" legacyBehavior passHref>
+          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+            <h1 className="text-xl text-blue-violet-500 font-bold">Narrative Engine</h1>
+          </NavigationMenuLink>
+        </Link>
+      </NavigationMenuItem>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+          <NavigationMenuContent className="bg-slate-50">
+            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+              {components.map((component) => (
+                <ListItem
+                  key={component.title}
+                  title={component.title}
+                  href={component.href}
+                >
+                  {component.description}
+                </ListItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+    <div className="absolute right-2 top-3">
+      {(session) ? <UserIcon session={session} /> : <Button onClick={() => signIn("discord")}>Sign in with Discord</Button>}
+    </div>
+  </div>);
+}
+
+function UserIcon(session) {
+  return (
+    <a href="/user-profile" className="flex">
+      <p className="font-bold text-slate-600 h-20 pr-2 pt-1">{session.user?.name}</p>
+      <img src={session.user?.image} alt="User Icon" className="w-8 h-8 rounded-md" />
+    </a>
+  );
 }
 
 const ListItem = React.forwardRef<
@@ -127,6 +99,21 @@ const ListItem = React.forwardRef<
   )
 })
 ListItem.displayName = "ListItem"
+
+const components: { title: string; href: string; description: string }[] = [
+  {
+    title: "Sourcebooks",
+    href: "/source-books",
+    description:
+      "Rules and content reference for your game system, in PDFs.",
+  },
+  {
+    title: "Game Records",
+    href: "/game-records",
+    description:
+      "Audio, transcription and summary of your game sessions.",
+  },
+];
 
 
 export default NavMenu;

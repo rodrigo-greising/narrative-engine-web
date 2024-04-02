@@ -11,16 +11,26 @@ export const runtime = 'edge';
  
 export async function POST(req: Request) {
   const { messages } = await req.json();
- 
-  // Ask OpenAI for a streaming chat completion given the prompt
+
+
   const response = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+    model: "gpt-3.5-turbo",
     stream: true,
-    messages,
+    messages: [
+      {
+        "role": "system",
+        "content": "You are a game rules assistant for tabletop rpgs, played online through discord, your job is to reference rules from an uploaded compendium to help players understand the game. "
+      },
+      ...messages
+    ],
+    temperature: 1,
+    max_tokens: 256,
+    top_p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
   });
- 
-  // Convert the response into a friendly text-stream
+
   const stream = OpenAIStream(response);
-  // Respond with the stream
+
   return new StreamingTextResponse(stream);
 }

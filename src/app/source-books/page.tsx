@@ -8,8 +8,7 @@ const Sourcebooks = () => {
         <div>            
             <NavMenu/>
             <div className="flex justify-center items-center">
-                <FileUpload/>                   
-                
+                <FileUpload/>                     
             </div>
             <Chat/>
         </div>

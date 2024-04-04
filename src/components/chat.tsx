@@ -1,13 +1,19 @@
 'use client';
 
-import { useChat } from 'ai/react';
+import { UseChatOptions, useChat } from 'ai/react';
 import { Button } from './ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
 import { MessageCircle } from 'lucide-react';
 
 
+
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const chatOptions : UseChatOptions = {
+    id: '1',
+  }
+
+  const { messages, input, handleInputChange, handleSubmit } = useChat(chatOptions);
+
 
   return (
     <Popover>

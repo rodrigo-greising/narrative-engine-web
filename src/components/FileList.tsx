@@ -2,13 +2,13 @@
 import React, { useEffect } from 'react'
 import { CircleCheckBig, FileText, Mic } from 'lucide-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 import axios from 'axios';
+import { useUser } from '@clerk/nextjs';
 
 
 const FileList = ({ seeRecording }) => {
     const [files, setFiles] = React.useState([]);
-    const { status, data: session = {} } = useSession();
+    const user = useUser();
 
     const fetchFiles = async () => {
         const response = await axios.post('/api/files', {campaignId: 1});
@@ -16,9 +16,9 @@ const FileList = ({ seeRecording }) => {
     }
 
     useEffect(() => {
-        if (status === "authenticated")
+        if (user.isLoaded)
             fetchFiles();
-    }, [status]);    
+    }, [user.isLoaded]);    
 
 
 

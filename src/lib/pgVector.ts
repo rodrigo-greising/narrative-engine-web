@@ -1,16 +1,13 @@
 import { downloadFromS3 } from "./s3-server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
-import md5 from "md5";
 import {
   Document,
   RecursiveCharacterTextSplitter,
 } from "@pinecone-database/doc-splitter";
 import { getEmbeddings } from "./embeddings";
-import { convertToAscii } from "./utils";
 import { PromisePool } from '@supercharge/promise-pool'
 import { sourcebookEmbedings, sourcebooks } from "./db/schema";
 import { db } from "./db";
-import { vector } from 'pgvector/drizzle-orm';
 import { eq } from "drizzle-orm";
 
 

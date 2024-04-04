@@ -2,8 +2,7 @@ import { db } from '@/lib/db';
 import { campaignSourcebooks, sourcebooks } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from "@/lib/auth"
+import { getAuth } from "@clerk/nextjs/server";
 
 
 // /api/files
@@ -13,7 +12,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   
   // get the user session
-  const session = await getServerSession(req, res, authOptions);
+  const session = await getAuth(req);
 
   if (!session) {
     return res.status(401).json({ error: 'You must be signed in to view files.' });

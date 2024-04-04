@@ -1,21 +1,20 @@
 import { db } from "@/lib/db";
-import { chats } from "@/lib/db/schema";
 import { loadS3IntoPinecone } from "@/lib/pinecone";
 import { getS3Url } from "@/lib/s3";
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
 import { NextApiRequest, NextApiResponse } from "next";
+import { getAuth } from "@clerk/nextjs/server";
+
 
 // /api/embed
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   
-  const session = await getServerSession(req);
+  const session = await getAuth(req);
   if (!session) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   try {
-    const { email } = session.user;
+    const { userId } = session;
 
     const body = await req.body;
 

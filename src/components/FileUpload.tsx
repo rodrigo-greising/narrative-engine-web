@@ -8,7 +8,6 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { uploadToS3 } from "@/lib/s3";
 import FileList from "./FileList";
-import { SessionProvider } from "next-auth/react";
 import md5 from "md5";
 
 
@@ -20,15 +19,17 @@ const FileUpload = ({ pageProps }) => {
     const [uploading, setUploading] = React.useState(false);
     const { mutate, isLoading } = useMutation({
         mutationFn: async ({
-            file_key,
-            file_name,
+            hash,
+            campaignId,
+            title
         }: {
-            file_key: string;
-            file_name: string;
+            hash: string;
+            campaignId: number;
+            title: string;
         }) => {
+            debugger;
             const response = await axios.post("/api/embed-document", {
-                file_key,
-                file_name,
+                hash, campaignId, title
             });
             return response.data;
         },
@@ -52,11 +53,15 @@ const FileUpload = ({ pageProps }) => {
 
                     setUploading(true);
                     const data = await uploadToS3(file, hash);
-                    if (!data?.file_key || !data.file_name) {
+                    if (!data?.hash || !data.file_name) {
                         toast.error("Something went wrong");
                         return;
                     }
-                    mutate(data, {
+                    mutate({ 
+                        hash,
+                        title: file.name,
+                        campaignId: 1, 
+                    }, {
                         onSuccess: ({ chat_id }) => {
                             console.log(chat_id);
                             toast.success("Chat created!");
@@ -80,9 +85,7 @@ const FileUpload = ({ pageProps }) => {
     return (
         <div className='p-2 rounded-xl h-3/4 w-3/4 flex justify-center items-center flex-col pt-16'>
             <h4 className="text-2xl h-6 text-blue-violet-500 font-bold pb-16">Upload and manage your source books here.</h4>
-            <SessionProvider session={session}>
                 <FileList seeRecording={false} />
-            </SessionProvider>
             <div {...getRootProps({
                 className: 'w-1/4 h-1/8 border-dashed border-2 border-blue-violet-500 rounded-xl cursor-pointer py-8 flex justify-center items-center flex-col mb-10'
             })}>

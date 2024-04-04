@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { UserButton } from "@clerk/nextjs";
 
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 
 import {
   NavigationMenu,
@@ -26,7 +26,6 @@ export function NavMenu() {
 }
 
 function NavMenuContent() {
-  const { data: session } = useSession()
 
   return (<div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md">
     <NavigationMenu >
@@ -57,19 +56,12 @@ function NavMenuContent() {
       </NavigationMenuList>
     </NavigationMenu>
     <div className="absolute right-2 top-3">
-      {(session) ? <UserIcon session={session} /> : <Button onClick={() => signIn("discord")}>Sign in with Discord</Button>}
+      <UserButton />
     </div>
   </div>);
 }
 
-function UserIcon(session) {
-  return (
-    <><a href="/user-profile" className="flex">
-      <p className="font-bold text-slate-600 h-20 pr-2 pt-1">{session.user?.name}</p>
-      <img src={session.user?.image} alt="User Icon" className="w-8 h-8 rounded-md" />
-    </a><button onClick={() => signOut()}>Sign out</button></>
-  );
-}
+
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,

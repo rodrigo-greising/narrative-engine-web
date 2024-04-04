@@ -1,8 +1,7 @@
 import OpenAI from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { getServerSession } from 'next-auth';
-import { getContext } from '@/lib/context';
-import { getSession } from 'next-auth/react';
+import { getPgContext } from '@/lib/pgContext';
+import { NextApiRequest } from 'next';
  
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI({
@@ -12,11 +11,12 @@ const openai = new OpenAI({
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge';
  
-export async function POST(req: Request) {
-  const { messages } = await req.json();
+export async function handler(req: NextApiRequest) {
+  const data = await req.body;
+  const { messages, id } = await req.body;
 
   const lastMessage = messages[messages.length - 1];
-  const context = await getContext(lastMessage.content, 'dnd');
+  const context = await getPgContext(lastMessage.content, id);
 
 
   const prompt = {
@@ -53,3 +53,5 @@ export async function POST(req: Request) {
 
   return new StreamingTextResponse(stream);
 }
+
+export default handler;

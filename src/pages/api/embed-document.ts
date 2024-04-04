@@ -1,22 +1,20 @@
 import { db } from "@/lib/db";
-import { chats } from "@/lib/db/schema";
 import { loadS3IntoPinecone } from "@/lib/pinecone";
 import { getS3Url } from "@/lib/s3";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
 import { NextApiRequest, NextApiResponse } from "next";
+import { loadS3IntoPGVector } from "@/lib/pgVector";
+import { campaignSourcebooks, sourcebooks } from "@/lib/db/schema";
 
 // /api/embed
-async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function handler(req: NextApiRequest, res: NextApiResponse) {
   
   const session = await getServerSession(req);
   if (!session) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   try {
-    const { email } = session.user;
-
     const body = await req.body;
 
     const chunks = [];
@@ -24,28 +22,24 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         chunks.push(chunk)
     }
     const bodyJson = Buffer.concat(chunks).toString();
-    const { file_key, file_name } = JSON.parse(bodyJson);
+    const { hash, campaignId, title } = JSON.parse(bodyJson);
 
-    console.log(file_key, file_name);
-    await loadS3IntoPinecone(file_key);
-    const chat_id = await db
-      .insert(chats)
-      .values({
-        fileKey: file_key,
-        pdfName: file_name,
-        pdfUrl: getS3Url(file_key),
-        userEmail: email!,
-      })
-      .returning({
-        insertedId: chats.id,
-      });
+    await db.insert(sourcebooks).values({
+        hash: hash,
+        link: getS3Url(hash),
+    });
 
-    return NextResponse.json(
-      {
-        chat_id: chat_id[0].insertedId,
-      },
-      { status: 200 }
-    );
+    await db.insert(campaignSourcebooks).values({
+        title: title,
+        campaignId: campaignId,
+        sourcebookHash: hash,
+    });
+
+    await loadS3IntoPGVector(hash);
+
+    // DB Query management
+
+    return res.status(200).json({ message: "success" });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -54,3 +48,5 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
     );
   }
 }
+
+export default handler;

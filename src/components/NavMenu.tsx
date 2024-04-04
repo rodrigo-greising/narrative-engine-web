@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 
-import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
 
 import {
   NavigationMenu,
@@ -19,12 +19,9 @@ import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
 
-export function NavMenu({ pageProps }) {
-  const session = pageProps?.session;
+export function NavMenu() {
   return (
-    <SessionProvider session={session}>
       <NavMenuContent />
-    </SessionProvider>
   )
 }
 
@@ -67,10 +64,10 @@ function NavMenuContent() {
 
 function UserIcon(session) {
   return (
-    <a href="/user-profile" className="flex">
+    <><a href="/user-profile" className="flex">
       <p className="font-bold text-slate-600 h-20 pr-2 pt-1">{session.user?.name}</p>
       <img src={session.user?.image} alt="User Icon" className="w-8 h-8 rounded-md" />
-    </a>
+    </a><button onClick={() => signOut()}>Sign out</button></>
   );
 }
 

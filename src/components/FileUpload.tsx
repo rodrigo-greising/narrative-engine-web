@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { uploadToS3 } from "@/lib/s3";
 import FileList from "./FileList";
 import { SessionProvider } from "next-auth/react";
+import md5 from "md5";
+
 
 // https://github.com/aws/aws-sdk-js-v3/issues/4126
 
@@ -24,7 +26,7 @@ const FileUpload = ({ pageProps }) => {
             file_key: string;
             file_name: string;
         }) => {
-            const response = await axios.post("/api/embed", {
+            const response = await axios.post("/api/embed-document", {
                 file_key,
                 file_name,
             });
@@ -37,8 +39,19 @@ const FileUpload = ({ pageProps }) => {
         onDrop: async (acceptedFiles) => {
             acceptedFiles.forEach(async (file) => {
                 try {
+                    const hash = md5(file);
+                    const response = await axios.post("/api/check-file-exists", {
+                        hash,
+                        title: file.name,
+                        campaignId: 1,
+                    });
+                    if (response.status === 200) {
+                        toast.error("File added to campaign");
+                        return;
+                    }
+
                     setUploading(true);
-                    const data = await uploadToS3(file);
+                    const data = await uploadToS3(file, hash);
                     if (!data?.file_key || !data.file_name) {
                         toast.error("Something went wrong");
                         return;

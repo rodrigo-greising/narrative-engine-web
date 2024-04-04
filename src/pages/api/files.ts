@@ -1,5 +1,5 @@
 import { db } from '@/lib/db';
-import { chats } from '@/lib/db/schema';
+import { campaignSourcebooks, sourcebooks } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
@@ -8,22 +8,29 @@ import { authOptions } from "@/lib/auth"
 
 // /api/files
 export async function handler(req: NextApiRequest, res: NextApiResponse) {
+
+  const {campaignId} = await req.body;
+
   
   // get the user session
   const session = await getServerSession(req, res, authOptions);
-  
-  const userEmail = session?.user?.email;
+
+  if (!session) {
+    return res.status(401).json({ error: 'You must be signed in to view files.' });
+  }
 
   try {
 
     // DB Query management
-    const _chats = await db.select().from(chats).where(eq(chats.userEmail, userEmail!));
+    const _sourcebooks = await db.select()
+    .from(campaignSourcebooks).innerJoin(sourcebooks, eq(sourcebooks.hash, campaignSourcebooks.sourcebookHash))
+    .where(eq(campaignSourcebooks.campaignId, campaignId));
 
-    let newFiles = _chats.map((chat) => {
+    let newFiles = _sourcebooks.map((book) => {
       return {
-          name: chat.pdfName,
-          dateUploaded: chat.createdAt,
-          isIndexed: true,
+          name: book.campaign_sourcebooks.title,
+          dateUploaded: book.sourcebooks.dateUploaded,
+          isIndexed: book.sourcebooks.isIndexed,
       };
     });
 

@@ -1,4 +1,3 @@
-import { Pinecone, PineconeRecord } from "@pinecone-database/pinecone";
 import { downloadFromS3 } from "./s3-server";
 import { PDFLoader } from "langchain/document_loaders/fs/pdf";
 import md5 from "md5";
@@ -9,13 +8,12 @@ import {
 import { getEmbeddings } from "./embeddings";
 import { convertToAscii } from "./utils";
 import { PromisePool } from '@supercharge/promise-pool'
+import { sourcebookEmbedings, sourcebooks } from "./db/schema";
+import { db } from "./db";
+import { vector } from 'pgvector/drizzle-orm';
+import { eq } from "drizzle-orm";
 
 
-export const getPineconeClient = () => {
-  return new Pinecone({
-    apiKey: process.env.PINECONE_API_KEY!,
-  });
-};
 
 type PDFPage = {
   pageContent: string;
@@ -24,10 +22,10 @@ type PDFPage = {
   };
 };
 
-export async function loadS3IntoPinecone(fileKey: string) {
+export async function loadS3IntoPGVector(hash: string) {
   // 1. obtain the pdf -> downlaod and read from pdf
   console.log("downloading s3 into file system");
-  const file_name = await downloadFromS3(fileKey);
+  const file_name = await downloadFromS3(hash);
   if (!file_name) {
     throw new Error("could not download from s3");
   }
@@ -42,35 +40,29 @@ export async function loadS3IntoPinecone(fileKey: string) {
   const { results, errors } = await PromisePool
   .for(documents.flat())
   .withConcurrency(5)
-  .process(embedDocument)
+  .process((doc) => embedDocument(doc, hash))
 
 
   const vectors = results;
 
-  // 4. upload to pinecone
-  const client = getPineconeClient();
-  const pineconeIndex = client.index("rulebooks");
-  const namespace = pineconeIndex.namespace(convertToAscii('dnd'));
-
-  console.log("inserting vectors into pinecone");
-  await namespace.upsert(vectors);
+  // 4. upload to postgress
+  await db.insert(sourcebookEmbedings).values(vectors);
+  await db.update(sourcebooks).set({ isIndexed: true }).where(eq(sourcebooks.hash, hash));
 
   return documents[0];
 }
 
-async function embedDocument(doc: Document) {
+async function embedDocument(doc: Document, hash: string) {
   try {
     const embeddings = await getEmbeddings(doc.pageContent);
-    const hash = md5(doc.pageContent);
+    const text = doc.metadata.text as string;
 
     return {
-      id: hash,
-      values: embeddings,
-      metadata: {
-        text: doc.metadata.text,
-        pageNumber: doc.metadata.pageNumber,
-      },
-    } as PineconeRecord;
+        sourcebookHash: hash,
+        vector: embeddings,
+        content: text,
+        pageNumber: doc.metadata.pageNumber as number,   
+    };
   } catch (error) {
     console.log("error embedding document", error);
     throw error;
@@ -96,5 +88,5 @@ async function prepareDocument(page: PDFPage) {
       },
     }),
   ]);
-  return docs;
+  return docs; 
 }

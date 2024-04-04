@@ -11,7 +11,7 @@ const FileList = ({ seeRecording }) => {
     const { status, data: session = {} } = useSession();
 
     const fetchFiles = async () => {
-        const response = await axios.get('/api/files')
+        const response = await axios.post('/api/files', {campaignId: 1});
         setFiles(response.data)
     }
 

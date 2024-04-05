@@ -7,14 +7,12 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { uploadToS3 } from "@/lib/s3";
-import FileList from "./FileList";
 import md5 from "md5";
 
 
 // https://github.com/aws/aws-sdk-js-v3/issues/4126
 
-const FileUpload = ({ pageProps }) => {
-    const session = pageProps?.session;
+const FileUpload = () => {
     const router = useRouter();
     const [uploading, setUploading] = React.useState(false);
     const { mutate, isLoading } = useMutation({
@@ -27,7 +25,6 @@ const FileUpload = ({ pageProps }) => {
             campaignId: number;
             title: string;
         }) => {
-            debugger;
             const response = await axios.post("/api/embed-document", {
                 hash, campaignId, title
             });
@@ -40,7 +37,18 @@ const FileUpload = ({ pageProps }) => {
         onDrop: async (acceptedFiles) => {
             acceptedFiles.forEach(async (file) => {
                 try {
+
+                    const reader = new FileReader()
+                    debugger;
+
+                    reader.onload = function (event) {
+                        const hash = md5(event.target!.result);
+                        console.log(hash)
+                    }
+                    reader.readAsArrayBuffer(file)
+
                     const hash = md5(file);
+                    debugger;
                     const response = await axios.post("/api/check-file-exists", {
                         hash,
                         title: file.name,
@@ -57,10 +65,10 @@ const FileUpload = ({ pageProps }) => {
                         toast.error("Something went wrong");
                         return;
                     }
-                    mutate({ 
+                    mutate({
                         hash,
                         title: file.name,
-                        campaignId: 1, 
+                        campaignId: 1,
                     }, {
                         onSuccess: ({ chat_id }) => {
                             console.log(chat_id);
@@ -83,18 +91,15 @@ const FileUpload = ({ pageProps }) => {
 
 
     return (
-        <div className='p-2 rounded-xl h-3/4 w-3/4 flex justify-center items-center flex-col pt-16'>
-            <h4 className="text-2xl h-6 text-blue-violet-500 font-bold pb-16">Upload and manage your source books here.</h4>
-                <FileList seeRecording={false} />
+
             <div {...getRootProps({
-                className: 'w-1/4 h-1/8 border-dashed border-2 border-blue-violet-500 rounded-xl cursor-pointer py-8 flex justify-center items-center flex-col mb-10'
+                className: 'h-1/8 border-dashed border-2 border-blue-violet-500 rounded-xl cursor-pointer py-8 px-4 flex justify-center items-center flex-col mb-10'
             })}>
                 <input {...getInputProps()} />
                 <Inbox className='text-blue-violet-600' />
                 <p className='text-blue-violet-600 text-center'>Drop rulebooks here</p>
             </div>
-        </div>);
-}
+);}
 
 
 

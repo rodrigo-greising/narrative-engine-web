@@ -1,4 +1,3 @@
-import { convertToAscii } from "./utils";
 import { getEmbeddings } from "./embeddings";
 import { db } from "./db";
 import { sourcebookEmbedings } from "./db/schema";
@@ -26,11 +25,7 @@ export async function getMatchesFromEmbeddings(
 export async function getPgContext(query: string, campaignId: string) {
   const queryEmbeddings = await getEmbeddings(query);
   const matches = await getMatchesFromEmbeddings(queryEmbeddings, campaignId);
-  let docs = matches.map((match) => ({
-    id: match.id,
-    text: match.content,
-    page: match.pageNumber
-  }));
+  let docs = matches.map((match) => (match.content));
 
   // 5 vectors
   return docs.join("\n").substring(0, 3000);

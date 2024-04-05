@@ -1,23 +1,17 @@
+// src/pages/api/chat.ts
+import { NextApiRequest, NextApiResponse } from 'next'
 import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { getPgContext } from '@/lib/pgContext';
-import { NextApiRequest } from 'next';
- 
-// Create an OpenAI API client (that's edge friendly!)
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
- 
-// IMPORTANT! Set the runtime to edge
-export const runtime = 'edge';
- 
-export async function handler(req: NextApiRequest) {
-  const data = await req.body;
-  const { messages, id } = await req.body;
+
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { messages, id } = req.body;
 
   const lastMessage = messages[messages.length - 1];
-  const context = await getPgContext(lastMessage.content, id);
-
+  const context = await getPgContext(lastMessage.content, '1');
 
   const prompt = {
     role: "system",
@@ -34,10 +28,9 @@ export async function handler(req: NextApiRequest) {
     `,
   };
 
-
+  
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
-    stream: true,
     messages: [
       prompt,
       ...messages
@@ -49,9 +42,7 @@ export async function handler(req: NextApiRequest) {
     presence_penalty: 0,
   });
 
-  const stream = OpenAIStream(response);
-
-  return new StreamingTextResponse(stream);
+  res.json(response.choices[0].message.content);
 }
 
 export default handler;

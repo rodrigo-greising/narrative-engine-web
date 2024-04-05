@@ -15,10 +15,10 @@ const FileList = ({files}) => {
 
         return (
             <div className="flex items-center justify-between py-2">
-                <span className="flex items-center w-10">
+                <span className="flex items-center w-1/3">
                     <i className="fas fa-file-alt text-slate-600  mr-2"></i>
                     <FileText />
-                    <span className="font-medium text-slate-600 ">{name}</span>
+                    <span className="font-medium text-slate-600 w-full">{name}</span>
                 </span>
                 <span className="text-sm text-slate-600  w-30">{extractDate(dateUploaded)}</span>
                 <CircleCheckBig className={isIndexed ? 'text-green-500' : 'text-gray-500'} />

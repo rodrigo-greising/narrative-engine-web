@@ -37,48 +37,45 @@ const FileUpload = () => {
         onDrop: async (acceptedFiles) => {
             acceptedFiles.forEach(async (file) => {
                 try {
-
                     const reader = new FileReader()
-                    debugger;
-
-                    reader.onload = function (event) {
-                        const hash = md5(event.target!.result);
-                        console.log(hash)
+                    reader.onload = async function (event) {
+                        const binary = event.target?.result as ArrayBuffer;
+                        const hashArray = Array.from(new Uint8Array(binary));
+                        const hash = md5(hashArray);
+                        
+                        const response = await axios.post("/api/check-file-exists", {
+                            hash,
+                            title: file.name,
+                            campaignId: 1,
+                        });
+                        if (response.status === 200) {
+                            toast.error("File added to campaign");
+                            return;
+                        }
+    
+                        setUploading(true);
+                        const data = await uploadToS3(file, hash);
+                        if (!data?.hash || !data.file_name) {
+                            toast.error("Something went wrong");
+                            return;
+                        }
+                        mutate({
+                            hash,
+                            title: file.name,
+                            campaignId: 1,
+                        }, {
+                            onSuccess: ({ chat_id }) => {
+                                console.log(chat_id);
+                                toast.success("Chat created!");
+                            },
+                            onError: (err) => {
+                                toast.error("Error creating chat");
+                                console.error(err);
+                            },
+                        });
+                    
                     }
-                    reader.readAsArrayBuffer(file)
-
-                    const hash = md5(file);
-                    debugger;
-                    const response = await axios.post("/api/check-file-exists", {
-                        hash,
-                        title: file.name,
-                        campaignId: 1,
-                    });
-                    if (response.status === 200) {
-                        toast.error("File added to campaign");
-                        return;
-                    }
-
-                    setUploading(true);
-                    const data = await uploadToS3(file, hash);
-                    if (!data?.hash || !data.file_name) {
-                        toast.error("Something went wrong");
-                        return;
-                    }
-                    mutate({
-                        hash,
-                        title: file.name,
-                        campaignId: 1,
-                    }, {
-                        onSuccess: ({ chat_id }) => {
-                            console.log(chat_id);
-                            toast.success("Chat created!");
-                        },
-                        onError: (err) => {
-                            toast.error("Error creating chat");
-                            console.error(err);
-                        },
-                    });
+                    reader.readAsArrayBuffer(file);                  
                 } catch (error) {
                     console.log(error);
                 } finally {

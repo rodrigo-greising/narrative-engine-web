@@ -23,7 +23,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     const sourcebook = await db.select().from(sourcebooks).where(eq(sourcebooks.hash, hash!));
 
     if (!sourcebook.length) {
-        return res.status(204).json({ message: 'File not found' });
+        return res.status(204).json({});
     } else {
         await db.insert(campaignSourcebooks).values({title: title, campaignId: campaignId, sourcebookHash: hash!});
         return res.status(200).json({ message: 'File found, added to campaign' });

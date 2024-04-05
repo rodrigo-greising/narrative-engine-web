@@ -22,7 +22,8 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     // DB Query management
     const _sourcebooks = await db.select()
-    .from(campaignSourcebooks).innerJoin(sourcebooks, eq(sourcebooks.hash, campaignSourcebooks.sourcebookHash))
+    .from(campaignSourcebooks)
+    .innerJoin(sourcebooks, eq(sourcebooks.hash, campaignSourcebooks.sourcebookHash))
     .where(eq(campaignSourcebooks.campaignId, campaignId));
 
     let newFiles = _sourcebooks.map((book) => {

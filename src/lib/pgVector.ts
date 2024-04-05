@@ -26,25 +26,33 @@ export async function loadS3IntoPGVector(hash: string) {
   if (!file_name) {
     throw new Error("could not download from s3");
   }
-  console.log("loading pdf into memory" + file_name);
+  console.log(hash + ": " +  Date.now() + ": " + "loading pdf into memory");
   const loader = new PDFLoader(file_name);
   const pages = (await loader.load()) as PDFPage[];
 
   // 2. split and segment the pdf
   const documents = await Promise.all(pages.map(prepareDocument));
 
+  const flat = documents.flat();
+
+  console.log(hash + ": " +  Date.now() + ": " + "starting embedding")
+
   // 3. vectorise and embed individual documents
   const { results, errors } = await PromisePool
-  .for(documents.flat())
+  .for(flat)
   .withConcurrency(5)
   .process((doc) => embedDocument(doc, hash))
 
 
-  const vectors = results;
+  const vectors =results;
+
+  console.log(hash + ": " +  Date.now() + ": " + "embeding complete, inserting vectors")
 
   // 4. upload to postgress
   await db.insert(sourcebookEmbedings).values(vectors);
   await db.update(sourcebooks).set({ isIndexed: true }).where(eq(sourcebooks.hash, hash));
+
+  console.log(hash + ": " +  Date.now() + ": " + "inserted vectors into db")
 
   return documents[0];
 }
@@ -52,7 +60,7 @@ export async function loadS3IntoPGVector(hash: string) {
 async function embedDocument(doc: Document, hash: string) {
   try {
     const embeddings = await getEmbeddings(doc.pageContent);
-    const text = doc.metadata.text as string;
+    const text = doc.pageContent as string;
 
     return {
         sourcebookHash: hash,

@@ -1,12 +1,22 @@
 import { Button } from "@/components/ui/button";
-import NavMenu from "@/components/NavMenu";
 import Link from "next/link";
+import LandingMenu from "@/components/LandingMenu";
+import {auth} from "@clerk/nextjs"
+import { redirect } from 'next/navigation'
+
+
 
 
 export default function Home() {
+  const user = auth();
+  
+  if (!!user.userId) {
+    redirect('/dashboard')
+  }
+
   return (
     <main className="bg-gradient-to-r from-slate-50 to-blue-violet-100">
-      <NavMenu/>
+      <LandingMenu/>
       <div className="flex h-full flex-col items-center justify-between p-24">
         <h1 className="text-6xl text-blue-violet-500 font-bold mb-4">Narrative Engine</h1>
         <h2>Unleash the Power of AI in Your RPG Universe</h2>
@@ -14,7 +24,7 @@ export default function Home() {
           A platform for creating and managing worlds for your stories and games. 
         </p>
         <Link href={'/create campaign'} className="p-2 bg-blue-violet-900 text-blue-violet-50 shadow hover:bg-blue-violet-900/90 dark:bg-blue-violet-50 dark:text-blue-violet-900 dark:hover:bg-blue-violet-50/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-violet-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-blue-violet-300">Get Started</Link>
-
+ 
         <div className="w-1/2 my-8">
           <h4 className="text-2xl h-6 text-blue-violet-500 font-bold mb-4">Upload, Understand, Unfold:</h4>
           <p className="text-slate-600 h-20  mb-8 ">We're not just building a tool; we're crafting an AI-powered revolution for role-playing games. Begin by uploading your RPG rule sets – whether it's the classic Dungeons & Dragons or your unique creation. Our AI delves deep into the rules, using advanced vector space and embedding techniques to create a cohesive, interactive rule set.</p>

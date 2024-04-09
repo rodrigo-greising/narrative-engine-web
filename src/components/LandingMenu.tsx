@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { UserButton } from "@clerk/nextjs";
 
 
 import {
@@ -15,17 +14,11 @@ import {
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu";
 
-import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
 
-export function NavMenu() {
-  return (
-      <NavMenuContent />
-  )
-}
 
-function NavMenuContent() {
+export function LandingMenu() {
 
   return (<div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md">
     <NavigationMenu >
@@ -55,9 +48,8 @@ function NavMenuContent() {
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
-    <div className="absolute right-2 top-3 flex">
-      <UserButton />
-    </div>
+    <div className="absolute right-2 top-2">
+      <Link href={'/dashboard'} className="p-2 mr-4 bg-blue-violet-900 text-blue-violet-50 shadow hover:bg-blue-violet-900/90 dark:bg-blue-violet-50 dark:text-blue-violet-900 dark:hover:bg-blue-violet-50/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-violet-950 disabled:pointer-events-none disabled:opacity-50 dark:focus-visible:ring-blue-violet-300">Get Started</Link>    </div>
   </div>);
 }
 
@@ -105,4 +97,4 @@ const components: { title: string; href: string; description: string }[] = [
 ];
 
 
-export default NavMenu;
+export default LandingMenu;

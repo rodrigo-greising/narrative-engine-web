@@ -6,9 +6,8 @@ import { db } from "@/lib/db";
 import { campaignSourcebooks, sourcebooks } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
-const Sourcebooks = async () => {
-    const campaignId = 1;
-
+async function Sourcebooks({params}) {
+    const { campaignId } = params;
     const _sourcebooks = await db.select()
     .from(campaignSourcebooks).innerJoin(sourcebooks, eq(sourcebooks.hash, campaignSourcebooks.sourcebookHash))
     .where(eq(campaignSourcebooks.campaignId, campaignId));

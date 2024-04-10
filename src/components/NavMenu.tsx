@@ -27,7 +27,7 @@ export function NavMenu() {
 
 function NavMenuContent() {
 
-  return (<div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md">
+  return (<div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md z-50">
     <NavigationMenu >
       <NavigationMenuItem className="pr-4">
         <Link href="/" legacyBehavior passHref>

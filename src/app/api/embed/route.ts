@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { loadS3IntoPinecone } from "@/lib/pinecone";
-import { getS3Url } from "@/lib/s3";
+import { getPDFS3Url } from "@/lib/s3";
 import { NextResponse } from "next/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAuth } from "@clerk/nextjs/server";
@@ -32,7 +32,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       .values({
         fileKey: file_key,
         pdfName: file_name,
-        pdfUrl: getS3Url(file_key),
+        pdfUrl: getPDFS3Url(file_key),
         userEmail: email!,
       })
       .returning({

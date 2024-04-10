@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { getS3Url } from "@/lib/s3";
+import { getPDFS3Url } from "@/lib/s3";
 import { NextResponse } from "next/server";
 import { NextApiRequest, NextApiResponse } from "next";
 import { loadS3IntoPGVector } from "@/lib/pgVector";
@@ -19,7 +19,7 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     await db.insert(sourcebooks).values({
         hash: hash,
-        link: getS3Url(hash),
+        link: getPDFS3Url(hash),
     });
 
     await db.insert(campaignSourcebooks).values({

@@ -5,15 +5,15 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { uploadToS3 } from "@/lib/s3";
+import { useParams } from 'next/navigation'
+import { uploadPDFToS3 } from "@/lib/s3";
 import md5 from "md5";
 
 
 // https://github.com/aws/aws-sdk-js-v3/issues/4126
 
 const FileUpload = () => {
-    const router = useRouter();
+    const {campaignId} = useParams();
     const [uploading, setUploading] = React.useState(false);
     const { mutate, isLoading } = useMutation({
         mutationFn: async ({
@@ -46,7 +46,7 @@ const FileUpload = () => {
                         const response = await axios.post("/api/check-file-exists", {
                             hash,
                             title: file.name,
-                            campaignId: 1,
+                            campaignId: campaignId,
                         });
                         if (response.status === 200) {
                             toast.error("File added to campaign");
@@ -54,7 +54,7 @@ const FileUpload = () => {
                         }
     
                         setUploading(true);
-                        const data = await uploadToS3(file, hash);
+                        const data = await uploadPDFToS3(file, hash);
                         if (!data?.hash || !data.file_name) {
                             toast.error("Something went wrong");
                             return;
@@ -62,7 +62,7 @@ const FileUpload = () => {
                         mutate({
                             hash,
                             title: file.name,
-                            campaignId: 1,
+                            campaignId: campaignId,
                         }, {
                             onSuccess: ({ chat_id }) => {
                                 console.log(chat_id);

@@ -17,48 +17,55 @@ import {
 
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { ModeToggle } from "./darkmodeToggle";
 
 
 export function NavMenu() {
   return (
-      <NavMenuContent />
+    <NavMenuContent />
   )
 }
 
 function NavMenuContent() {
+  const { setTheme } = useTheme()
 
-  return (<div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md z-50">
-    <NavigationMenu >
-      <NavigationMenuItem className="pr-4">
-        <Link href="/" legacyBehavior passHref>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-            <h1 className="text-xl text-blue-violet-500 font-bold">Narrative Engine</h1>
-          </NavigationMenuLink>
-        </Link>
-      </NavigationMenuItem>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Features</NavigationMenuTrigger>
-          <NavigationMenuContent className="bg-slate-50">
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
+  return (
+
+    <div className="sticky w-full bg-slate-50 top-0 py-2 shadow-md z-50 dark:bg-blue-violet-950">
+      <NavigationMenu >
+        <NavigationMenuItem className="pr-4">
+          <Link href="/" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <h1 className="text-xl text-blue-violet-500 font-bold">Narrative Engine</h1>
+            </NavigationMenuLink>
+          </Link>
         </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-    <div className="absolute right-2 top-3 flex">
-      <UserButton />
-    </div>
-  </div>);
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>Features</NavigationMenuTrigger>
+            <NavigationMenuContent className="bg-slate-50 dark:bg-blue-violet-950">
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
+                {components.map((component) => (
+                  <ListItem
+                    key={component.title}
+                    title={component.title}
+                    href={component.href}
+                  >
+                    {component.description}
+                  </ListItem>
+                ))}
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+      <div className="absolute right-2 top-3 flex">
+        <ModeToggle/>
+        <UserButton />
+      </div>
+    </div >);
 }
 
 
@@ -79,7 +86,7 @@ const ListItem = React.forwardRef<
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground dark:text-blue-violet-50">
             {children}
           </p>
         </a>

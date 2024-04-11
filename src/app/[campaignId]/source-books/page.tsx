@@ -17,6 +17,8 @@ async function Sourcebooks({params}) {
           name: book.campaign_sourcebooks.title,
           dateUploaded: book.sourcebooks.dateUploaded,
           isIndexed: book.sourcebooks.isIndexed,
+          hash: book.sourcebooks.hash,
+          imageUrl: book.sourcebooks.imageUrl,
       };
     });
 

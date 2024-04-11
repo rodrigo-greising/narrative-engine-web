@@ -15,6 +15,7 @@ export const sourcebooks = pgTable('sourcebooks', {
     hash: text('hash').primaryKey(),
     dateUploaded: timestamp('dateUploaded').notNull().defaultNow(),
     link: text('link').notNull(),
+    imageUrl: text('image_url'),
     isIndexed: boolean('isIndexed').default(false).notNull(),
 });
 

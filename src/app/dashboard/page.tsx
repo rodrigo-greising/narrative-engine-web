@@ -40,9 +40,9 @@ const Dashboard = async () => {
                                     className="rounded-t-3xl"
                                 />
                             </div>
-                            <div className="bg-slate-50 rounded-b-3xl mt-0 p-2">
-                                <h2 className="text-xl font-bold my-2">{campaign.campaign.title}</h2>
-                                <p className="text-md text-gray-700 overflow-hidden h-32">{campaign.campaign.description}</p>
+                            <div className="bg-slate-50 rounded-b-3xl mt-0 p-2 dark:bg-blue-violet-950">
+                                <h2 className="text-xl font-bold my-2 dark:text-slate-50">{campaign.campaign.title}</h2>
+                                <p className="text-md text-gray-700 overflow-hidden h-32 dark:text-slate-50 text-ellipsis">{campaign.campaign.description}</p>
                             </div>
                         </Link>
                     </div>

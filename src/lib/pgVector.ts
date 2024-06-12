@@ -6,10 +6,14 @@ import {
 } from "@pinecone-database/doc-splitter";
 import { getEmbeddings } from "./embeddings";
 import { PromisePool } from '@supercharge/promise-pool'
-import { sourcebookEmbedings, sourcebooks } from "./db/schema";
+import { campaignSourcebooks, sourcebookEmbedings, sourcebooks } from "./db/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
-
+import path from 'path';
+import fs from 'fs';
+import { exec } from "child_process";
+import { title } from "process";
+import { getImageS3Url, getPDFS3Url } from "./s3";
 
 
 type PDFPage = {
@@ -19,13 +23,15 @@ type PDFPage = {
   };
 };
 
-export async function loadS3IntoPGVector(hash: string) {
+export async function loadS3IntoPGVector(hash: string, campaignId: number, title: string) {
   // 1. obtain the pdf -> downlaod and read from pdf
   console.log("downloading s3 into file system");
-  const file_name = await downloadFromS3(hash);
+  const file_name = await downloadFromS3(`${hash}.pdf`);
+
   if (!file_name) {
     throw new Error("could not download from s3");
   }
+
   console.log(hash + ": " +  Date.now() + ": " + "loading pdf into memory");
   const loader = new PDFLoader(file_name);
   const pages = (await loader.load()) as PDFPage[];
@@ -47,6 +53,19 @@ export async function loadS3IntoPGVector(hash: string) {
   const vectors =results;
 
   console.log(hash + ": " +  Date.now() + ": " + "embeding complete, inserting vectors")
+
+  //insert sourcebook into db
+  await db.insert(sourcebooks).values({
+    hash: hash,
+    link: getPDFS3Url(hash),
+    imageUrl: getImageS3Url(hash),
+});
+
+  await db.insert(campaignSourcebooks).values({
+      title: title,
+      campaignId: campaignId,
+      sourcebookHash: hash,
+  });
 
   // 4. upload to postgress
   await db.insert(sourcebookEmbedings).values(vectors);

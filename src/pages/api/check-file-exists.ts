@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import { campaignSourcebooks, sourcebooks } from '@/lib/db/schema';
 import { getAuth } from '@clerk/nextjs/server';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 
@@ -25,7 +25,16 @@ export async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (!sourcebook.length) {
         return res.status(204).json({});
     } else {
-        await db.insert(campaignSourcebooks).values({title: title, campaignId: campaignId, sourcebookHash: hash!});
+        const existingEntry = await db.select().from(campaignSourcebooks).where(
+          and(eq(campaignSourcebooks.campaignId, campaignId),
+          eq(campaignSourcebooks.sourcebookHash, hash))
+        );
+
+        if (existingEntry.length) {
+          return res.status(200).json({ message: 'File found, added to campaign' });
+        }
+
+        await db.insert(campaignSourcebooks).values({ title: title, campaignId: campaignId, sourcebookHash: hash });
         return res.status(200).json({ message: 'File found, added to campaign' });
     }
 

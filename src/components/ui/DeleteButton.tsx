@@ -13,7 +13,7 @@ const DeleteButton  = (hash) => {
     return (
         <Button
             onClick={handleDelete}
-            className="bg-red-500 hover:bg-red-700 text-slate-100 font-bold py-1 px-3 rounded">
+            className="bg-red-500 hover:bg-red-700 text-slate-100 font-bold py-1 mb-4 px-3 rounded">
             Delete
         </Button>
     );

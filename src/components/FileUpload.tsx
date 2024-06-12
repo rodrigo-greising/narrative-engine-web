@@ -1,16 +1,17 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
-import { Inbox, Loader2 } from "lucide-react";
+import { Inbox } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useParams } from 'next/navigation'
-import { uploadPDFToS3 } from "@/lib/s3";
+import { uploadImageToS3, uploadPDFToS3 } from "@/lib/s3";
 import md5 from "md5";
 
 
 // https://github.com/aws/aws-sdk-js-v3/issues/4126
+
 
 const FileUpload = () => {
     const {campaignId} = useParams();
@@ -54,6 +55,7 @@ const FileUpload = () => {
                         }
     
                         setUploading(true);
+
                         const data = await uploadPDFToS3(file, hash);
                         if (!data?.hash || !data.file_name) {
                             toast.error("Something went wrong");
